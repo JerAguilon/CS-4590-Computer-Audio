@@ -1,4 +1,4 @@
-FreeSound Source URL: 
+FreeSound Source URL: https://freesound.org/people/Doctor_Jekyll/sounds/240195/
 
 
 
@@ -6,3 +6,14 @@ FreeSound Source URL:
 
 If you use a custom UGen (Unit Generator) for your exercise, describe it below:
 
+The reverb UGen sits between the sample player and the gain UGen. From a topological point of view:
+
+Sound Sample --> Gain UGen --> Reverb UGen --> Sample Player
+
+Reverb seems to have 3 parameters: early reflections, room size, and late reverb level. I
+opted to make the slider modify the late reverb level while keeping the others constant.
+This seems to reasonably give the impression of a larger room that the trumpet is playing
+in.
+
+Both gain and reverb range from 0 to 5, and I scaled the slider values (which range from 0 to 100)
+to do this.

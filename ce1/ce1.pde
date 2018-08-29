@@ -10,11 +10,8 @@ ControlP5 p5;
 SamplePlayer buttonSound;
 
 Gain g;
+Reverb r;
 Glide gainGlide;
-Glide rateGlide;
-Glide cutoffGlide;
-
-BiquadFilter filter1;
 
 //end global variables
 
@@ -25,30 +22,46 @@ void setup() {
   p5 = new ControlP5(this);
   
   buttonSound = getSamplePlayer("trumpet.wav");
-  ac.out.addInput(buttonSound);
-  ac.start();      
   
-  gainGlide = new Glide(ac, 0.0, 50);
+  gainGlide = new Glide(ac, 0, 0);
   g = new Gain(ac, 1, gainGlide);
-  rateGlide = new Glide(ac, 1.0, 50);
-  cutoffGlide = new Glide(ac, 200.0, 50);
-  
-  filter1 = new BiquadFilter(ac, BiquadFilter.AP, cutoffGlide, 0.5f);
-  
-  filter1.addInput(buttonSound);
-  ac.start();
-  
+  g.addInput(buttonSound);
+
+  r = new Reverb(ac);
+  r.setLateReverbLevel(0);
+  r.addInput(g);
+  ac.out.addInput(r);
+
   p5.addSlider("GainSlider")
-    .setPosition(10, 20)
-    .setSize(200, 20)
-    .setRange(0, 100);   
-  p5.addButton("Play Music");
-   
-  
+    .setPosition(240, 10)
+    .setSize(20, 200)
+    .setValue(50)
+    .setRange(0, 100);
+  p5.addSlider("ReverbSlider")
+    .setPosition(170, 10)
+    .setSize(20, 200)
+    .setValue(0)
+    .setRange(0, 100);
+  p5.addButton("PlayMusic")
+    .setSize(150, 80)
+    .setPosition(10, 60);
+  ac.start();
 }
 
+void GainSlider(int val) {
+  gainGlide.setValue(((float) val) / 20);
+}
+
+void ReverbSlider(int val) {
+  r.pause(false);
+  r.setLateReverbLevel(((float) val) / 20);
+
+}
+
+void PlayMusic() {
+  buttonSound.reset();
+}
 
 void draw() {
   background(0);  //fills the canvas with black (0) each frame
-
 }
