@@ -22,15 +22,15 @@ SamplePlayer reset;
 
 //runs once when the Play button above is pressed
 void setup() {
-  size(320, 240); //size(width, height) must be the first line in setup()
+  size(320, 260); //size(width, height) must be the first line in setup()
   ac = new AudioContext(); //AudioContext ac; is declared in helper_functions 
   p5 = new ControlP5(this);
   
-  play = getButtonSamplePlayer("play.wav");
-  rewind = getButtonSamplePlayer("rewind.wav");
-  stop = getButtonSamplePlayer("stop.wav");
-  fastforward = getButtonSamplePlayer("fastforward.wav");
-  reset = getButtonSamplePlayer("reset.wav");
+  play = getButtonSamplePlayer("play.wav", ac);
+  rewind = getButtonSamplePlayer("rewind.wav", ac);
+  stop = getButtonSamplePlayer("stop.wav", ac);
+  fastforward = getButtonSamplePlayer("fastforward.wav", ac);
+  reset = getButtonSamplePlayer("reset.wav", ac);
 
   music = getSamplePlayer("intermission.wav", false); // make sure killOnEnd = false
   musicRateGlide = new Glide(ac, 0, 250); // initially, set rate to 0, otherwise, music will play when you start the sketch
@@ -56,20 +56,30 @@ void setup() {
     }
   };
   p5.addButton("Play")
-    .setPosition(50, 80);
+    .setWidth(width - 20)
+    .setHeight(40)
+    .setPosition(10 , 10);
     
   p5.addButton("Rewind")
-    .setPosition(50, 110);
+    .setWidth(width - 20)
+    .setHeight(40)
+    .setPosition(10, 60);
 
   p5.addButton("Stop")
-    .setPosition(50, 140);
+    .setWidth(width - 20)
+    .setHeight(40)
+    .setPosition(10, 110);
 
   p5.addButton("FastForward")
-    .setPosition(50, 170)
+    .setPosition(10, 160)
+    .setWidth(width - 20)
+    .setHeight(40)
     .setLabel("Fast Forward");
     
   p5.addButton("Reset")
-    .setPosition(50, 200);
+    .setWidth(width - 20)
+    .setHeight(40)
+    .setPosition(10, 210);
   ac.out.addInput(music);
 
   ac.out.addInput(play);
@@ -80,13 +90,23 @@ void setup() {
   ac.start();
 }
 
-public SamplePlayer getButtonSamplePlayer(String fname) {
-  return null;
+public SamplePlayer getButtonSamplePlayer(String fname, AudioContext ac) {
+  final SamplePlayer s = getSamplePlayer(fname);
+  final Glide g = new Glide(ac, 0, 0); // initially, set rate to 0, otherwise, music will play when you start the sketch
+  s.setRate(g);
+  s.setEndListener(new Bead() {
+    public void messageReceived(Bead b) {
+      g.setValueImmediately(0);
+      s.setToLoopStart();
+    }
+  });
+  return s;
 }
 
 // Assuming you have a ControlP5 button called ‘Play’
-public void Play(int value)
+public void Play()
 {
+    play.getRateUGen().setValue(1);
     // if we haven’t reached the end of the tape yet, setEndListener and update playback rate
     if (music.getPosition() < musicLength) {
         music.setEndListener(musicEndListener);
@@ -98,21 +118,25 @@ public void Play(int value)
 // Create similar button handlers for fast-forward and rewind
 
 public void Stop() {
+    stop.getRateUGen().setValue(1);
     musicRateGlide.setValue(0);
 }
 
-public void Rewind(int value) {
+public void Rewind() {
+    rewind.getRateUGen().setValue(1);
     music.setEndListener(musicEndListener);
     musicRateGlide.setValue(-2);
 }
 
-public void Reset(int value) {
+public void Reset() {
+    reset.getRateUGen().setValue(1);
     music.setEndListener(musicEndListener);
     music.setToLoopStart();
-    musicRateGlide.setValue(0);
+    musicRateGlide.setValueImmediately(0);
 }
 
-public void FastForward(int value) {
+public void FastForward() {
+    fastforward.getRateUGen().setValue(1);
     // if we haven’t reached the end of the tape yet, setEndListener and update playback rate
                 musicRateGlide.setValueImmediately(0); // pause music by setting the playback rate to zero
 
