@@ -5,24 +5,18 @@ import org.jaudiolibs.beads.*;
 //declare global variables at the top of your sketch
 //AudioContext ac; is declared in helper_functions
 
-private static final int BIQUAD_FILTER = 500;
-
-SamplePlayer backgroundMusic;
-SamplePlayer v1;
-SamplePlayer v2;
-
 ControlP5 p5;
 
-Glide gainGlide;
-float gainAmount;
-Gain gain;
+SamplePlayer music;
+Glide musicRateGlide; // control playback rate of music SamplePlayer (i.e. play, FF, Rewind)
+double musicLength; // used to store length of music sample in milliseconds
+Bead musicEndListener; // used to detect end/beginning of music playback, rewind, FF
 
-Glide duckGainGlide;
-float duckGainAmount;
-Gain duckGain;
-
-BiquadFilter filter;
-Glide filterGlide;
+SamplePlayer play;
+SamplePlayer rewind;
+SamplePlayer stop;
+SamplePlayer fastforward;
+SamplePlayer reset;
 
 //end global variables
 
@@ -32,93 +26,103 @@ void setup() {
   ac = new AudioContext(); //AudioContext ac; is declared in helper_functions 
   p5 = new ControlP5(this);
   
-  backgroundMusic = getBackground("intermission.wav");
-  v1 = getVoiceover("voice1.wav");
-  v2 = getVoiceover("voice2.wav");
-  
-  gainGlide = new Glide(ac, 0, 100);
-  gain = new Gain(ac, 1, gainGlide);
- 
-  duckGainGlide = new Glide(ac, 1, 800);
-  duckGain = new Gain(ac, 1, duckGainGlide);
-  
-  filterGlide = new Glide(ac, 1, 800);
-  filter = new BiquadFilter(ac, BiquadFilter.Type.HP, filterGlide, .7);
-  
-  filter.addInput(backgroundMusic);
-  duckGain.addInput(filter);
-  gain.addInput(duckGain);
-  gain.addInput(v1);
-  gain.addInput(v2);
-  
-  p5.addSlider("GainSlider")
-    .setPosition(50, 10)
-    .setSize(150, 20)
-    .setValue(50)
-    .setRange(0, 100)
-    .setLabel("Master Gain");
+  play = getButtonSamplePlayer("play.wav");
+  rewind = getButtonSamplePlayer("rewind.wav");
+  stop = getButtonSamplePlayer("stop.wav");
+  fastforward = getButtonSamplePlayer("fastforward.wav");
+  reset = getButtonSamplePlayer("reset.wav");
 
-  p5.addButton("voice1")
-    .setPosition(50, 80)
-    .setLabel("Voice 1");
+  music = getSamplePlayer("intermission.wav", false); // make sure killOnEnd = false
+  musicRateGlide = new Glide(ac, 0, 250); // initially, set rate to 0, otherwise, music will play when you start the sketch
+  music.setRate(musicRateGlide); // pause music - equivalent to music.pause(true);
+  musicLength = music.getSample().getLength(); // store length of music sample in ms
+  // create an endListener event handler to detect when the end or beginning of the music sample has been reached
+  musicEndListener =  new Bead() {
+    public void messageReceived(Bead message) {
+        // remove this endListener to prevent its firing over and over due to playback position bugs in Beads
+        music.setEndListener(null);
+        // Reset playback position to end or beginning of sample to work around Beads bug
+        //  where playback position can go past the end points of the sample.
+        // if playing or fast-forwarding and the playback head is at the end of the music sample
+        if (musicRateGlide.getValue() > 0 && music.getPosition() >= musicLength) {
+            musicRateGlide.setValueImmediately(0); // pause music, use setValueImmediately() instead of setValue()
+            music.setToEnd(); // reset playback position to the end of the sample, ready to rewind
+        }
+        // if rewinding and the playback position is at the start of the music sample
+        if (musicRateGlide.getValue() < 0 && music.getPosition() <= 0.0) {
+            musicRateGlide.setValueImmediately(0); // pause music by setting the playback rate to zero
+            music.reset(); // reset playback position to the start of the sample
+        }
+    }
+  };
+  p5.addButton("Play")
+    .setPosition(50, 80);
     
-  p5.addButton("voice2")
-    .setPosition(50, 120)
-    .setLabel("Voice 2");
-  
-  ac.out.addInput(gain);
+  p5.addButton("Rewind")
+    .setPosition(50, 110);
+
+  p5.addButton("Stop")
+    .setPosition(50, 140);
+
+  p5.addButton("FastForward")
+    .setPosition(50, 170)
+    .setLabel("Fast Forward");
+    
+  p5.addButton("Reset")
+    .setPosition(50, 200);
+  ac.out.addInput(music);
+
+  ac.out.addInput(play);
+  ac.out.addInput(rewind);
+  ac.out.addInput(stop);
+  ac.out.addInput(reset);
+  ac.out.addInput(fastforward);
   ac.start();
 }
 
-void play(SamplePlayer sp) {
-  sp.setToLoopStart();
-  sp.start();
+public SamplePlayer getButtonSamplePlayer(String fname) {
+  return null;
 }
 
-void voice1() {
-  v2.pause(true);
-  play(v1);
-  duckGainGlide.setValue(.4);
-  filterGlide.setValue(BIQUAD_FILTER);
-}
-
-void voice2() {
-  v1.pause(true);
-  play(v2);
-  duckGainGlide.setValue(.4);
-  filterGlide.setValue(BIQUAD_FILTER);
-}
-
-void GainSlider(int val) {
-  gainGlide.setValue(((float) val) / 100);
-}
-
-SamplePlayer getBackground(String fname) {
-  SamplePlayer b = getSamplePlayer(fname);
-  b.setLoopType(SamplePlayer.LoopType.LOOP_FORWARDS);
-  return b;
-}
-
-SamplePlayer getVoiceover(String fname) {
-  final SamplePlayer voiceover = getSamplePlayer(fname);
-  voiceover.pause(true);
-  voiceover.setEndListener(
-    new Bead() {
-      public void messageReceived(Bead m) {
-        voiceover.pause(true);
-        voiceover.setToLoopStart();
-        filterGlide.setValue(isTalking() ? BIQUAD_FILTER : 1);
-        duckGainGlide.setValue(1.0);
-      }
+// Assuming you have a ControlP5 button called ‘Play’
+public void Play(int value)
+{
+    // if we haven’t reached the end of the tape yet, setEndListener and update playback rate
+    if (music.getPosition() < musicLength) {
+        music.setEndListener(musicEndListener);
+        // play music forward at normal speed
+        musicRateGlide.setValue(1);
     }
-  );
-  return voiceover;
+    // Play your ‘Play’ button sound effect
+}
+// Create similar button handlers for fast-forward and rewind
+
+public void Stop() {
+    musicRateGlide.setValue(0);
 }
 
-boolean isTalking() {
-  return !v1.isPaused() || !v2.isPaused();
+public void Rewind(int value) {
+    music.setEndListener(musicEndListener);
+    musicRateGlide.setValue(-2);
 }
 
+public void Reset(int value) {
+    music.setEndListener(musicEndListener);
+    music.setToLoopStart();
+    musicRateGlide.setValue(0);
+}
+
+public void FastForward(int value) {
+    // if we haven’t reached the end of the tape yet, setEndListener and update playback rate
+                musicRateGlide.setValueImmediately(0); // pause music by setting the playback rate to zero
+
+    if (music.getPosition() < musicLength) {
+        music.setEndListener(musicEndListener);
+        // play music forward at normal speed
+        musicRateGlide.setValue(2);
+    }
+    // Play your ‘Play’ button sound effect
+}
 
 void draw() {
   background(0);  //fills the canvas with black (0) each frame
