@@ -32,7 +32,7 @@ void setup() {
   fastforward = getButtonSamplePlayer("fastforward.wav", ac);
   reset = getButtonSamplePlayer("reset.wav", ac);
 
-  music = getSamplePlayer("intermission.wav", false); // make sure killOnEnd = false
+  music = getSamplePlayer("moonlightsonata.mp3", false); // make sure killOnEnd = false
   musicRateGlide = new Glide(ac, 0, 250); // initially, set rate to 0, otherwise, music will play when you start the sketch
   music.setRate(musicRateGlide); // pause music - equivalent to music.pause(true);
   musicLength = music.getSample().getLength(); // store length of music sample in ms
@@ -125,7 +125,7 @@ public void Stop() {
 public void Rewind() {
     rewind.getRateUGen().setValue(1);
     music.setEndListener(musicEndListener);
-    musicRateGlide.setValue(-2);
+    musicRateGlide.setValue(-4);
 }
 
 public void Reset() {
@@ -143,7 +143,7 @@ public void FastForward() {
     if (music.getPosition() < musicLength) {
         music.setEndListener(musicEndListener);
         // play music forward at normal speed
-        musicRateGlide.setValue(2);
+        musicRateGlide.setValue(4);
     }
     // Play your ‘Play’ button sound effect
 }
