@@ -17,6 +17,9 @@ color back = color(0, 0, 0);
 boolean usingMic = false;
 boolean usingReverb = false;
 
+SamplePlayer player;
+UGen micInput;
+
 RadioButton filterMode;
 int currentFilterMode = 0;
 
@@ -32,8 +35,9 @@ float MAX_GLIDE = 10000;
 ArrayList<Glide> glides = new ArrayList();
 ArrayList<UGen> filters = new ArrayList();
 
+Reverb reverb;
+
 float cutoffFreqVal = MIN_GLIDE;
-float reverbVal;
 
 Gain g;
 
@@ -79,13 +83,13 @@ void setup() {
     .setColorActive(color(255))
     .setColorLabel(color(255))
     .setPosition(50, 110)
-    .addItem("Use Reverb", 0);
+    .addItem("Use REverb", 0);
 
   reverbSlider = p5.addSlider("reverbSlider")
     .setPosition(350, 110)
     .setSize(150, 20)
     .lock()
-    .setLabel("Reverb Slider"); 
+    .setLabel("ReverbSlider Slider"); 
      
   
   ac = new AudioContext();
@@ -105,22 +109,25 @@ void setup() {
   ac.out.addInput(g);
 
   // load up a sample included in code download
-  SamplePlayer player = null;
+  player = null;
   try {
     // Load up a new SamplePlayer using an included audio
     // file.
 
-    player = getSamplePlayer("techno.wav", false);
+    player = getSamplePlayer("simple_loop.wav", false);
     player.setLoopType(SamplePlayer.LoopType.LOOP_FORWARDS);
     // connect the SamplePlayer to the master Gain
     
     g.addInput(player);
   } 
   catch (Exception e) {
-    // If there is an error, print the steps that got us to
+    // If there is an error,  the steps that got us to
     // that error.
     e.printStackTrace();
   }
+  
+  micInput = ac.getAudioInput();
+  
   glides.add(null);
   glides.add(lowPassGlide);
   glides.add(highPassGlide);
@@ -136,6 +143,10 @@ void setup() {
     filter.addInput(player);
   }
   
+  reverb = new Reverb(ac);
+  reverb.setSize(0);
+  reverb.addInput(player);
+    
   // In this block of code, we build an analysis chain
   // the ShortFrameSegmenter breaks the audio into short,
   // discrete chunks.
@@ -166,6 +177,41 @@ void setup() {
 // In the draw routine, we will interpret the FFT results and
 // draw them on screen.
 
+void rebuildUGenGraph() {
+  ArrayList<UGen> dependencyList = getUGenList();
+  
+  println("New UGen Graph: " );
+  println(dependencyList);
+  
+  for (int i = 1; i < dependencyList.size(); i++) {
+    dependencyList.get(i).clearInputConnections();
+    dependencyList.get(i).addInput(dependencyList.get(i - 1));
+  }
+}
+
+ArrayList<UGen> getUGenList() {
+  ArrayList<UGen> output = new ArrayList();
+  
+  if (usingMic) {
+    output.add(micInput);
+  } else {
+    output.add(player);
+  }
+  
+  if (usingReverb) {
+    output.add(reverb);
+  }
+  
+  if (currentFilterMode != 0) {
+    output.add(filters.get(currentFilterMode));
+    glides.get(currentFilterMode).setValue(cutoffFreqVal);
+  }
+  
+  output.add(g);
+  
+  return output;
+}
+
 void filterMode(int i) {
   if (i != -1) {
     cutoffFreq.unlock();
@@ -177,22 +223,8 @@ void filterMode(int i) {
     cutoffFreq.lock();
     filterMode.activate(0);
   }
-
-  UGen oldFilter = filters.get(currentFilterMode);
   currentFilterMode = i;
-  UGen newFilter = filters.get(currentFilterMode);
-  
-  g.printInputList();
-  g.removeAllConnections(oldFilter);
-  g.addInput(newFilter);
-  g.printInputList();
-  
-  Glide g = glides.get(i);
-  if (g != null) {
-    g.setValue(cutoffFreqVal);
-  }
-  
-  
+  rebuildUGenGraph();
 }
 
 void useMic(int i) {
@@ -201,6 +233,7 @@ void useMic(int i) {
   } else {
     usingMic = false;
   }
+  rebuildUGenGraph();
 }
 
 void useReverb(int i ) {
@@ -216,10 +249,10 @@ void useReverb(int i ) {
     reverbSlider.lock();
     reverbSlider.setValue(0);
   }
+  rebuildUGenGraph();
 }
 
 void cutoffFrequency(float i) {
-  
   cutoffFreqVal = i;
   if (filters.size() <= 0) return; // edge case
   
@@ -231,16 +264,14 @@ void cutoffFrequency(float i) {
 }
 
 void reverbSlider(float i) {
-  println(i);
-  reverbVal = i;
+  println(reverb);
+  if (reverb == null) return; // edge case on setup
+  reverb.setSize(i / 100);
 }
 
 void draw() {
   background(back);
   stroke(fore);
-
-  line(0, 95, width, 95);
-  line(0, 140, width, 140);
 
   // The getFeatures() function is a key part of the Beads
   // analysis library. It returns an array of floats
