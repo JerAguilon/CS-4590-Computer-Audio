@@ -1,0 +1,13 @@
+FreeSound Source URL: 
+
+
+
+https://www.youtube.com/watch?v=bAgmGZ9iQ2Y 
+(MACINTOSH PLUS - FLORAL SHOPPE)
+
+--
+
+If you use a custom UGen (Unit Generator) for your exercise, describe it below:
+
+
+The extra UGen was a Reverb. The way you can control affect its sound is through controlling its early reverb level.

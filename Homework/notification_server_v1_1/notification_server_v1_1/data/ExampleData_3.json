@@ -1,0 +1,141 @@
+[
+  {
+    "type": "VoiceMail",
+    "timestamp": 2000,
+    "sender": "(404) 123-4567",
+    "message": "This is Bank of America, we are trying to reach you about a potential identity theft Please call us at 1 800 1234 4567",
+    "priority": 1,
+    "contentSummary": 3
+  },
+  {
+    "type": "Email",
+    "timestamp": 2000,
+    "sender": "asb@cc.gatech.edu",
+    "message": "Looking to do undergraduate research Join this info session on Th",
+    "priority": 3,
+    "contentSummary": 1
+  },
+  {
+    "type": "Tweet",
+    "timestamp": 3000,
+    "sender": "@maribethgandy",
+    "message": "auditory interfaces for wearable computing is the future #wearabletech",
+    "priority": 3,
+    "retweets": 5,
+    "favorites": 15
+  },
+  {
+    "type": "Tweet",
+    "timestamp": 6000,
+    "sender": "@yourweirdfriend",
+    "message": "I can't believe how @chipotle screwed up my order #toomanybeans",
+    "priority": 4,
+    "retweets": 0,
+    "favorites": 0
+  },
+  {
+    "type": "Email",
+    "timestamp": 9000,
+    "sender": "Spammy.McSpamerson@shadydomainnames.net",
+    "message": "I HAVE A MILLION DALLORS TO GIEV YOU",
+    "priority": 4,
+    "contentSummary": 2
+  },
+  {
+    "type": "Tweet",
+    "timestamp": 10000,
+    "sender": "@yourweirdfriend",
+    "message": "Seriously @chipotle you gave me food poisoning",
+    "priority": 3,
+    "retweets": 10,
+    "favorites": 1
+  },
+  {
+    "type": "Email",
+    "timestamp": 10500,
+    "sender": "Internationl Conference of Fake Science",
+    "message": "Publish your journal article in our fake conference to improve your resume",
+    "priority": 4,
+    "contentSummary": 2
+  },
+  {
+    "type": "Email",
+    "timestamp": 11000,
+    "sender": "Spammy.McSpamerson@shadydomainnames.net",
+    "message": "PLEASE I MUST GIVE YOU SO MANY DOLLARS",
+    "priority": 4,
+    "contentSummary": 2
+  },
+  {
+    "type": "Email",
+    "timestamp": 13000,
+    "sender": "CNN",
+    "message": "A Very Scary Natural Disaster Just Happened",
+    "priority": 1,
+    "contentSummary": 3
+  },
+  {
+    "type": "Email",
+    "timestamp": 14000,
+    "sender": "best friend",
+    "message": "Let's play Hearthstone tonight I just spent $500 on cards",
+    "priority": 3,
+    "contentSummary": 1
+  },
+  {
+    "type": "Email",
+    "timestamp": 15000,
+    "sender": "frenemy",
+    "message": "Did you hear the rude thing someone said about you at the party on Saturday",
+    "priority": 3,
+    "contentSummary": 3
+  },
+  {
+    "type": "Email",
+    "timestamp": 16000,
+    "sender": "group project list",
+    "message": "When is deliverable 4 due?",
+    "priority": 3,
+    "contentSummary": 2
+  },
+  {
+    "type": "Email",
+    "timestamp": 18000,
+    "sender": "group project list",
+    "message": "I can't work on the project this weekend I got food poisoning at Chipotle",
+    "priority": 2,
+    "contentSummary": 3
+  },
+  {
+    "type": "Tweet",
+    "timestamp": 20000,
+    "sender": "@yourweirdfriend",
+    "message": "I am going to sue @chipotle checking in at @gradyhospital with terrible stomach pains",
+    "priority": 2,
+    "retweets": 100,
+    "favorites": 1000
+  },
+  {
+    "type": "MissedCall",
+    "timestamp": 30000,
+    "sender": "Mom",
+    "priority": 1
+  },
+  {
+    "type": "Tweet",
+    "timestamp": 50000,
+    "sender": "@yourweirdfriend",
+    "message": "I need one of my friends to come pick me up @gradyhospital I can't drive",
+    "priority": 1,
+    "retweets": 1,
+    "favorites": 0
+  },
+  {
+    "type": "VoiceMail",
+    "timestamp": 60000,
+    "sender": "Mom",
+    "message": "Hi Sweetie, I can't wait to see you this weekend! Remember that we are having that surprise party for your Dad's retirement so we need to coordinate on a gift",
+    "priority": 3,
+    "contentSummary": 1
+  }
+]

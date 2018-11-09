@@ -1,0 +1,50 @@
+[
+  {
+    "type": "TextMessage",
+    "timestamp": 100,
+    "sender": "Alan Parsons",
+    "message": "Whassup?",
+    "priority": 1,
+    "contentSummary": 2
+  },
+  {
+    "type": "Tweet",
+    "timestamp": 3000,
+    "sender": "Dan of Steel",
+    "message": "WHY WOULD YOU NOT PUNT, OMG",
+    "priority": 1,
+    "retweets": 3,
+    "favorites": 1
+  },
+  {
+    "type": "MissedCall",
+    "timestamp": 6000,
+    "sender": "Alan Parsons",
+    "priority": 1
+  },
+  {
+    "type": "VoiceMail",
+    "timestamp": 12000,
+    "sender": "Alan Parsons",
+    "message": "Dude! You gotta call me.",
+    "priority": 2,
+    "contentSummary": 2
+  },
+  {
+    "type": "Tweet",
+    "timestamp": 15000,
+    "sender": "Dan of Steel",
+    "message": "FIRE PAUL JOHNSON, LMAO, WHO ARE WE GONNA GET INSTEAD????",
+    "priority": 1,
+    "retweets": 0,
+    "favorites": 0
+  },
+  {
+    "type": "Email",
+    "timestamp": 18000,
+    "sender": "Engineer's Bookstore",
+    "message": "Going out of business sale",
+    "priority": 1,
+    "contentSummary": 2
+  }
+]

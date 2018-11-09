@@ -1,0 +1,137 @@
+[
+  {
+    "type": "Tweet",
+    "timestamp": 500,
+    "sender": "@yourweirdfriend",
+    "message": "OMG can you believe that award show last night #shocking",
+    "priority": 4,
+    "retweets": 5456,
+    "favorites": 455678
+  },
+  {
+    "type": "Email",
+    "timestamp": 1000,
+    "sender": "Dr. Maribeth Gandy",
+    "message": "[cs4590] funny cat video",
+    "priority": 4,
+    "contentSummary": 1
+  },
+  {
+    "type": "TextMessage",
+    "timestamp": 1500,
+    "sender": "Sister",
+    "message": "Hey",
+    "priority": 3,
+    "contentSummary": 2
+  },
+  {
+    "type": "VoiceMail",
+    "timestamp": 3000,
+    "sender": "GTENS",
+    "message": "This is a test of the emergency alert network",
+    "priority": 1,
+    "contentSummary": 2
+  },
+  {
+    "type": "MissedCall",
+    "timestamp": 8000,
+    "sender": "Sister",
+    "priority": 3
+  },
+  {
+    "type": "Email",
+    "timestamp": 9500,
+    "sender": "Platinum Mastercard Rewards",
+    "message": "Еarn rewards on purchases see if you Pre-Qualify",
+    "priority": 3,
+    "contentSummary": 2
+  },
+  {
+    "type": "Email",
+    "timestamp": 10000,
+    "sender": "Dr. Maribeth Gandy",
+    "message": "[cs4590] Your assignment 4 is late!",
+    "priority": 1,
+    "contentSummary": 3
+  },
+  {
+    "type": "Email",
+    "timestamp": 11000,
+    "sender": "Crown Prince Spammy McSpamerson",
+    "message": "THIS IS YOU LAST CHANCE TO SEND ME ALL YOUR BANKING INFO",
+    "priority": 4,
+    "contentSummary": 2
+  },
+  {
+    "type": "TextMessage",
+    "timestamp": 13000,
+    "sender": "Sister",
+    "message": "Why are you ignoring me",
+    "priority": 2,
+    "contentSummary": 3
+  },
+  {
+    "type": "TextMessage",
+    "timestamp": 14000,
+    "sender": "(205) 555-5467",
+    "message": "Hey is this Janet's phone",
+    "priority": 4,
+    "contentSummary": 2
+  },
+  {
+    "type": "MissedCall",
+    "timestamp": 16000,
+    "sender": "Sister",
+    "priority": 2
+  },
+  {
+    "type": "Tweet",
+    "timestamp": 20000,
+    "sender": "@Delta",
+    "message": "we apologize for losting your luggage here's a voucher #sorry",
+    "priority": 1,
+    "retweets": 2,
+    "favorites": 1
+  },
+  {
+    "type": "Email",
+    "timestamp": 25000,
+    "sender": "Uncle Bob",
+    "message": "I'm going to change your mind about the president",
+    "priority": 2,
+    "contentSummary": 3
+  },
+  {
+    "type": "VoiceMail",
+    "timestamp": 32000,
+    "sender": "Sister",
+    "message": "Call me back immediately",
+    "priority": 1,
+    "contentSummary": 3
+  },
+  {
+    "type": "Tweet",
+    "timestamp": 35000,
+    "sender": "@skullmandible",
+    "message": "is there anything more capitalist than a peanut with a top hat, cane, and monocle selling you other peanuts to eat",
+    "priority": 2,
+    "retweets": 1600,
+    "favorites": 56000
+  },
+  {
+    "type": "TextMessage",
+    "timestamp": 50000,
+    "sender": "Sister",
+    "message": "Okay, fine, be that way do not call me at christmas",
+    "priority": 1,
+    "contentSummary": 3
+  },
+  {
+    "type": "VoiceMail",
+    "timestamp": 53000,
+    "sender": "(404) 555-5555",
+    "message": "Don't forget to vote for McPoliticsFace on Tuesday. I endorse this message",
+    "priority": 4,
+    "contentSummary": 1
+  }
+]

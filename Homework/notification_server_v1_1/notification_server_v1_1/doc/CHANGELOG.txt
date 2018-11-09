@@ -1,0 +1,11 @@
+1.1 
+
+Changed loading event streams to be a single function call. After creating the server, you should register any listeners you want from your custom classes and then call server.loadEventStream(eventDataJSON); This will take care of loading the JSON file and creating all of the Notification objects. 
+
+Each Notification will still arrive via notificationReceived(Notification notification) as before. If you want to look at all of the notifications loaded from the JSON file, you can do so via server.getCurrentNotifications(). This will give you all of the notifications from the last JSON event stream you loaded in an ArrayList.
+
+To load a new stream, you should call server.stopEventStream() before calling loadEventStream with a new JSON file.
+
+1.0 
+
+Initial Release
