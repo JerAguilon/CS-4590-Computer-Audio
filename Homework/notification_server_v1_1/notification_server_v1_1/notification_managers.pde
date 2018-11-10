@@ -1,6 +1,8 @@
 import java.util.Map;
 import java.util.HashMap;
 
+import java.lang.reflect.*;
+
 /**
  * Singleton NotificationManagers: can't internalize these in their respective classes due to some
  * processing implementation shenanigans
@@ -42,8 +44,8 @@ abstract class NotificationManager {
   }
 
   public void processNotification(Notification n) {
-    tts.speak(n.getSender());
-    tts.speak(n.getMessage());
+    /* tts.speak(n.getSender()); */
+    /* tts.speak(n.getMessage()); */
 
     String debugOutput = "";
     switch (n.getType()) {
@@ -71,23 +73,81 @@ abstract class NotificationManager {
 }
 
 class EmailNotificationManager extends NotificationManager {
-
+  public void processNotification(Notification n) {
+    /* g.addInput(getSamplePlayer(NotificationSound.TWITTER_CHIRP)); */
+    super.processNotification(n);
+  }
 }
 
 class TweetNotificationManager extends NotificationManager {
 
-} 
+  private static final int RETWEET_NOTIFICATION_THRESHOLD = 1000;
+
+  private void processPartyNotification(Notification n) {
+    if (n.getPriorityLevel() > 2) {
+      g.addInput(getSamplePlayer(NotificationSound.TWITTER_CHIRP));
+    } else if (n.getRetweets() > TweetNotificationManager.RETWEET_NOTIFICATION_THRESHOLD) {
+      g.addInput(getSamplePlayer(NotificationSound.TWITTER_CHIRP));
+    }
+  }
+
+  private void processJoggingNotification(Notification n) {
+    if (n.getPriorityLevel() > 2) {
+      g.addInput(getSamplePlayer(NotificationSound.TWITTER_CHIRP));
+    }
+  }
+
+  private void processLectureNotification(Notification n) {
+    // TODO: play a non-intrusive sound when something urgent comes up
+    if (n.getPriorityLevel() == 4) {
+      g.addInput(getSamplePlayer(NotificationSound.TWITTER_CHIRP));
+    }
+  }
+  
+  private void processPublicTransitNotification(Notification n) {
+    //TODO: Do we want to do it every time for this environment?
+    g.addInput(getSamplePlayer(NotificationSound.TWITTER_CHIRP));
+  }
+
+  public void processNotification(Notification n) {
+    switch(this.environment) {
+      case PARTY: 
+        processPartyNotification(n);
+        break;
+      case LECTURING:
+        processLectureNotification(n);
+        break;
+      case JOGGING:
+        processJoggingNotification(n);
+        break;
+      case PUBLIC_TRANSIT:
+        processPublicTransitNotification(n);
+        break;
+      default:
+        break;
+    }
+    super.processNotification(n);
+  }
+}
 
 class TextNotificationManager extends NotificationManager {
-
+  public void processNotification(Notification n) {
+    super.processNotification(n);
+  }
 } 
 
 class MissedCallNotificationManager extends NotificationManager {
-
+  public void processNotification(Notification n) {
+    /* g.addInput(getSamplePlayer(NotificationSound.TWITTER_CHIRP)); */
+    super.processNotification(n);
+  }
 } 
 
 class VoiceMailNotificationManager extends NotificationManager {
-
+  public void processNotification(Notification n) {
+    /* g.addInput(getSamplePlayer(NotificationSound.TWITTER_CHIRP)); */
+    super.processNotification(n);
+  }
 } 
 
 

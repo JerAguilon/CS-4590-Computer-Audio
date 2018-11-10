@@ -1,5 +1,7 @@
 //<import statements here>
 
+import java.util.concurrent.TimeUnit;
+
 import guru.ttslib.*;
 
 import controlP5.*;
@@ -30,15 +32,8 @@ void setup() {
   
   p5 = new ControlP5(this);
   
-  //START NotificationServer setup
-  server = new NotificationServer();
-  
-  //instantiating a custom class (seen below) and registering it as a listener to the server
-  example = new Example();
-  server.addListener(example);
   
   //loading the event stream, which also starts the timer serving events
-  server.loadEventStream(eventDataJSON1);
   
   /**
    * MBrola has a more pleasant voice than the defualt, but I had to download the voice profile.
@@ -46,12 +41,27 @@ void setup() {
   System.setProperty("mbrola.base", MRBROLA_LOCATION);
   tts = new TTS("mbrola_us1");
   tts.setPitch(200);
+
+  example = new Example();
   
   ac = new AudioContext();
   g = new Gain(ac, 2, .3);
   ac.out.addInput(g);
   g.addInput(getSamplePlayer(example.getEnvironment()));
   ac.start();
+
+  // Sleep to let the ac start playing
+  try {
+    TimeUnit.SECONDS.sleep(2);
+  } catch(InterruptedException e) {
+    Thread.currentThread().interrupt();
+  }
+
+  //START NotificationServer setup
+  server = new NotificationServer();
+  server.loadEventStream(eventDataJSON1);
+  //instantiating a custom class (seen below) and registering it as a listener to the server
+  server.addListener(example);
   //END NotificationServer setup 
 }
 

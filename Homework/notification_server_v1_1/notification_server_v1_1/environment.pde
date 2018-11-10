@@ -54,10 +54,11 @@ public enum NotificationSound {
   EMAIL_DING(""),
   EMAIL_TRIPLE_DING(""),
   
-  TWITTER_CHIRP(""),
+  TWITTER_CHIRP("chirp.wav"),
   
   PHONE_DEFAULT_RING(""),
   PHONE_URGENT_RING(""),
+
   VOICEMAIL_CLIMBING_BEEPS("");
   
   private final String wavFile;
