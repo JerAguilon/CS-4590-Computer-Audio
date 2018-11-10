@@ -3,6 +3,7 @@
 import guru.ttslib.*;
 
 import controlP5.*;
+import beads.*;
 
 //to use this, copy notification.pde, notification_listener.pde and notification_server.pde from this sketch to yours.
 //Example usage below.
@@ -20,6 +21,8 @@ static final String MRBROLA_LOCATION = "/usr/share/mbrola";
 TTS tts;
 
 ControlP5 p5;
+
+Gain g;
 
 void setup() {
   
@@ -44,6 +47,11 @@ void setup() {
   tts = new TTS("mbrola_us1");
   tts.setPitch(200);
   
+  ac = new AudioContext();
+  g = new Gain(ac, 2, .3);
+  ac.out.addInput(g);
+  g.addInput(getSamplePlayer(example.getEnvironment()));
+  ac.start();
   //END NotificationServer setup 
 }
 
@@ -65,41 +73,24 @@ void keyPressed() {
 //in your own custom class, you will implement the NotificationListener interface 
 //(with the notificationReceived() method) to receive Notification events as they come in
 class Example implements NotificationListener {
-  
+  private Environment environment;
+
   public Example() {
     //setup here
+    this.environment = Environment.PARTY;
   }
   
   //this method must be implemented to receive notifications
   public void notificationReceived(Notification notification) { 
     println("<Example> " + notification.getType().toString() + " notification received at " 
     + Integer.toString(notification.getTimestamp()) + "millis.");
+  
+    NotificationManager manager = getNotificationManager(notification.getType());
+    manager.processNotification(notification);
     
-    String debugOutput = "";
-    switch (notification.getType()) {
-      case Tweet:
-        debugOutput += "New tweet from ";
-        tts.speak(notification.getSender());
-        tts.speak(notification.getMessage());
-        break;
-      case Email:
-        debugOutput += "New email from ";
-        break;
-      case VoiceMail:
-        debugOutput += "New voicemail from ";
-        break;
-      case MissedCall:
-        debugOutput += "Missed call from ";
-        break;
-      case TextMessage:
-        debugOutput += "New message from ";
-        break;
-    }
-    debugOutput += notification.getSender() + ", " + notification.getMessage();
-    
-    println(debugOutput);
-    
-   //You can experiment with the timing by altering the timestamp values (in ms) in the exampleData.json file
-    //(located in the data directory)
+  }
+  
+  public Environment getEnvironment() {
+    return this.environment;
   }
 }

@@ -32,11 +32,11 @@ SamplePlayer getSamplePlayer(Environment e) {
 }
 
 SamplePlayer getSamplePlayer(NotificationSound n) {
-  return getSamplePlayer(n.getSoundFile());
+  return getSamplePlayer(n.getSoundFile(), true);
 }
 
 public enum Environment {
-  PUBLIC_TRANSIT(""), JOGGING(""), PARTY(""), LECTURING("");
+  PUBLIC_TRANSIT(""), JOGGING(""), PARTY("party.mp3"), LECTURING("");
   
   private final String wavFile;
   
