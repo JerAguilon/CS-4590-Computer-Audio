@@ -36,7 +36,7 @@ SamplePlayer getSamplePlayer(NotificationSound n) {
 }
 
 public enum Environment {
-  PUBLIC_TRANSIT(""), JOGGING(""), PARTY("party.mp3"), LECTURING("");
+  PUBLIC_TRANSIT(""), JOGGING("jog.wav"), PARTY("party.mp3"), LECTURING("");
   
   private final String wavFile;
   

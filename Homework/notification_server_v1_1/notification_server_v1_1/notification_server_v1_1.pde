@@ -23,6 +23,9 @@ static final String MRBROLA_LOCATION = "/usr/share/mbrola";
 TTS tts;
 
 ControlP5 p5;
+RadioButton environmentButtons;
+color fore = color(255, 255, 255);
+color back = color(0, 0, 0);
 
 Gain g;
 
@@ -31,6 +34,20 @@ void setup() {
   size(600, 600);
   
   p5 = new ControlP5(this);
+
+  environmentButtons = p5.addRadioButton("environmentButtons")
+    .setPosition(50, 40)
+    .setSize(40, 20)
+    .setColorForeground(color(120))
+    .setColorActive(color(255))
+    .setColorLabel(color(255))
+    .setItemsPerRow(2)
+    .setSpacingColumn(80)
+    .setSpacingRow(10)
+    .addItem("Public Transit", 0)
+    .addItem("Jogging", 1)
+    .addItem("Party", 2)
+    .addItem("Lecturing", 3);
   
   
   //loading the event stream, which also starts the timer serving events
@@ -67,6 +84,8 @@ void setup() {
 
 void draw() {
   //this method must be present (even if empty) to process events such as keyPressed()
+  background(back);
+  stroke(fore);
   
 }
 
@@ -77,7 +96,15 @@ void keyPressed() {
     server.loadEventStream(eventDataJSON2);
     println("**** New event stream loaded: " + eventDataJSON2 + " ****");
   }
-    
+}
+
+void environmentButtons(int i) {
+  if (i != -1) {
+    println("Setting to " + Integer.toString(i));
+    example.setEnvironment(Environment.values()[i]);
+  } else {
+    example.setEnvironment(null);
+  }
 }
 
 //in your own custom class, you will implement the NotificationListener interface 
@@ -102,5 +129,9 @@ class Example implements NotificationListener {
   
   public Environment getEnvironment() {
     return this.environment;
+  }
+
+  public void setEnvironment(Environment e) {
+    this.environment = e;
   }
 }
