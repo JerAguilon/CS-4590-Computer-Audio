@@ -138,27 +138,15 @@ class TextNotificationManager extends NotificationManager {
 
 class MissedCallNotificationManager extends NotificationManager {
   public void processNotification(Notification n) {
-    /* g.addInput(getSamplePlayer(NotificationSound.TWITTER_CHIRP)); */
+    g.addInput(getSamplePlayer(NotificationSound.PHONE_DEFAULT_RING));
     super.processNotification(n);
   }
 } 
 
 class VoiceMailNotificationManager extends NotificationManager {
   public void processNotification(Notification n) {
-    /* g.addInput(getSamplePlayer(NotificationSound.TWITTER_CHIRP)); */
+    g.addInput(getSamplePlayer(NotificationSound.PHONE_DEFAULT_RING));
     super.processNotification(n);
   }
 } 
 
-
-/* class Notification { */
-   
-/*   int timestamp; */
-/*   NotificationType type; //Tweet, Email, TextMessage, MissedCall, VoiceMail */
-/*   String message; //NOT used by MissedCall */
-/*   String sender; */
-/*   int priority; */
-/*   int contentSummary; //NOT used by Tweet or MissedCall */
-/*   int retweets; //used by Tweet only */
-/*   int favorites; //used by Tweet only */
-/* } */

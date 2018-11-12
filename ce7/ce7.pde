@@ -114,7 +114,7 @@ void setup() {
     // Load up a new SamplePlayer using an included audio
     // file.
 
-    player = getSamplePlayer("simple_loop.wav", false);
+    player = getSamplePlayer("accordian.wav", false);
     player.setLoopType(SamplePlayer.LoopType.LOOP_FORWARDS);
     // connect the SamplePlayer to the master Gain
     

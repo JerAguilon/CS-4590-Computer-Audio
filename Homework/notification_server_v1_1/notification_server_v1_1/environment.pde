@@ -56,7 +56,7 @@ public enum NotificationSound {
   
   TWITTER_CHIRP("chirp.wav"),
   
-  PHONE_DEFAULT_RING(""),
+  PHONE_DEFAULT_RING("phone_ring.wav"),
   PHONE_URGENT_RING(""),
 
   VOICEMAIL_CLIMBING_BEEPS("");
