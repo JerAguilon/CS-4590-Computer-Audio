@@ -73,8 +73,54 @@ abstract class NotificationManager {
 }
 
 class EmailNotificationManager extends NotificationManager {
+  private void processPartyNotification(Notification n) {
+    if (n.getPriorityLevel() > 3) {
+      g.addInput(getSamplePlayer(NotificationSound.EMAIL_TRIPLE_DING));
+    } else {
+      g.addInput(getSamplePlayer(NotificationSound.EMAIL_DING));
+    }
+  }
+
+  private void processJoggingNotification(Notification n) {
+    if (n.getPriorityLevel() > 2) {
+      g.addInput(getSamplePlayer(NotificationSound.EMAIL_TRIPLE_DING));
+    } else {
+      g.addInput(getSamplePlayer(NotificationSound.EMAIL_DING));
+    }
+  }
+
+  private void processLectureNotification(Notification n) {
+    // TODO: maybe white noise?
+    if (n.getPriorityLevel() == 4) {
+      g.addInput(getSamplePlayer(NotificationSound.EMAIL_TRIPLE_DING));
+    }
+  }
+  
+  private void processPublicTransitNotification(Notification n) {
+    if (n.getPriorityLevel() > 2) {
+      g.addInput(getSamplePlayer(NotificationSound.EMAIL_TRIPLE_DING));
+    } else {
+      g.addInput(getSamplePlayer(NotificationSound.EMAIL_DING));
+    }
+  }
+
   public void processNotification(Notification n) {
-    /* g.addInput(getSamplePlayer(NotificationSound.TWITTER_CHIRP)); */
+    switch(this.environment) {
+      case PARTY: 
+        processPartyNotification(n);
+        break;
+      case LECTURING:
+        processLectureNotification(n);
+        break;
+      case JOGGING:
+        processJoggingNotification(n);
+        break;
+      case PUBLIC_TRANSIT:
+        processPublicTransitNotification(n);
+        break;
+      default:
+        break;
+    }
     super.processNotification(n);
   }
 }

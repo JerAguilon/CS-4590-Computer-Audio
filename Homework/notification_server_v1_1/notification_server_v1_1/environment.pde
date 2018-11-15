@@ -4,7 +4,7 @@ import beads.*;
 AudioContext ac; //needed here because getSamplePlayer() uses it below
 
 Sample getSample(String fileName) {
- return SampleManager.sample(dataPath(fileName)); 
+  return SampleManager.sample(dataPath(fileName)); 
 }
 
 SamplePlayer getSamplePlayer(String fileName, Boolean killOnEnd) {
@@ -16,6 +16,7 @@ SamplePlayer getSamplePlayer(String fileName, Boolean killOnEnd) {
   }
   catch(Exception e) {
     println("Exception while attempting to load sample: " + fileName);
+    println(e);
     e.printStackTrace();
     exit();
   }
@@ -36,16 +37,16 @@ SamplePlayer getSamplePlayer(NotificationSound n) {
 }
 
 public enum Environment {
-  PUBLIC_TRANSIT(""), JOGGING("jog.wav"), PARTY("party.mp3"), LECTURING("");
+  PUBLIC_TRANSIT(""), JOGGING("jogging.mp3"), PARTY("party.mp3"), LECTURING("");
   
-  private final String wavFile;
+  private final String soundFile;
   
-  private Environment(String wavFile) {
-    this.wavFile = wavFile;
+  private Environment(String soundFile) {
+    this.soundFile = soundFile;
   }
   
   public String getSoundFile() {
-    return this.wavFile;
+    return this.soundFile;
   }
 }
 

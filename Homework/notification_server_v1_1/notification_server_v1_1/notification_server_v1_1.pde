@@ -59,13 +59,11 @@ void setup() {
   tts = new TTS("mbrola_us1");
   tts.setPitch(200);
 
-  example = new Example();
   
   ac = new AudioContext();
   g = new Gain(ac, 2, .3);
-  ac.out.addInput(g);
-  g.addInput(getSamplePlayer(example.getEnvironment()));
-  ac.start();
+
+  example = new Example(ac, g);
 
   // Sleep to let the ac start playing
   try {
@@ -111,10 +109,17 @@ void environmentButtons(int i) {
 //(with the notificationReceived() method) to receive Notification events as they come in
 class Example implements NotificationListener {
   private Environment environment;
+  private AudioContext ac;
+  private Gain masterGain;
 
-  public Example() {
+  public Example(AudioContext ac, Gain g) {
     //setup here
     this.environment = Environment.PARTY;
+    this.ac = ac;
+    this.masterGain = g;
+    ac.out.addInput(g);
+    g.addInput(getSamplePlayer(this.environment));
+    ac.start();
   }
   
   //this method must be implemented to receive notifications
@@ -124,7 +129,6 @@ class Example implements NotificationListener {
   
     NotificationManager manager = getNotificationManager(notification.getType());
     manager.processNotification(notification);
-    
   }
   
   public Environment getEnvironment() {
@@ -133,5 +137,8 @@ class Example implements NotificationListener {
 
   public void setEnvironment(Environment e) {
     this.environment = e;
+    this.masterGain.clearInputConnections();
+    SamplePlayer s = getSamplePlayer(this.environment);
+    this.masterGain.addInput(s);
   }
 }

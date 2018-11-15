@@ -21,12 +21,20 @@ PowerSpectrum ps;
 Frequency f;
 Glide frequencyGlide;
 WavePlayer wp;
+Gain wpGain;
+Glide wpGlide;
+
+PeakDetector beatDetector;
+
 
 float meanFrequency = 400.0;
 
 color fore = color(255, 255, 255);
+color foreBeat = color(0, 255, 0);
 color back = color(0,0,0);
 color highlight = color(255, 0, 0);
+
+int foundBeat = 0;
 
 int setHeight = 600;
 
@@ -36,6 +44,9 @@ boolean micToggle = false;
 UGen microphoneIn;
 
 BiquadFilter filter;
+
+boolean usingResynth = false;
+
 void setup() {
   size(1000, 750);
   p5 = new ControlP5(this);
@@ -55,7 +66,7 @@ void setup() {
     // Load up a new SamplePlayer using an included audio
     // file.
     
-    player = getSamplePlayer("accordian.wav",false);
+    player = getSamplePlayer("simple_loop.wav",false);
     player.setLoopType(SamplePlayer.LoopType.valueOf("LOOP_FORWARDS"));
   }
   catch(Exception e) {
@@ -102,7 +113,28 @@ void setup() {
   // and electronics that the signal flows through.
   
   // Create a new Frequency UGen and add it to th ps PowerSpectrum via addListener() - see 9.3
-  
+  f = new Frequency(44100.0f);
+  ps.addListener(f);
+
+  frequencyGlide = new Glide(ac, 50, 10);
+
+  wp = new WavePlayer(ac, frequencyGlide, Buffer.SINE);
+  wpGlide = new Glide(ac, 1, 500);
+  wpGain = new Gain(ac, 1, wpGlide);
+  wpGain.addInput(wp);
+
+  SpectralDifference sd = new SpectralDifference(ac.getSampleRate());
+  ps.addListener(sd);
+  beatDetector = new PeakDetector();
+  sd.addListener(beatDetector);
+  beatDetector.setThreshold(.2f);
+  beatDetector.setAlpha(.9f);
+  beatDetector.addMessageListener(
+    new Bead() {
+      protected void messageReceived(Bead b) { foundBeat = 4; }
+    }
+  );
+
   // list the frame segmenter as a dependent, so that the
   // AudioContext knows when to update it.
   ac.out.addDependent(sfs);
@@ -150,7 +182,7 @@ void setup() {
     .activateBy((ControlP5.RELEASE))
     .setLabel("Resynth Toggle");
     
-  resynthGainSlider = p5.addSlider("resynthGainSlider")
+ resynthGainSlider = p5.addSlider("resynthGainSlider")
     .setPosition(600, height - 100)
     .setSize(300 ,20)
     .setRange(0, 100)
@@ -172,13 +204,25 @@ void draw()
   int strongestFreqIndex = 0;
   
   background(back);
-  stroke(fore);
+  color strokeColor = fore; 
+  if (foundBeat > 0) {
+    strokeColor = foreBeat;
+    foundBeat -= 1;
+  }
+
   
   // Find strongest frequency and comput meanFrequency - see 9.3
-  meanFrequency = getStrongestFrequency();
   
   // draw the average frequency on screen
   text(" Dectected Strongest Frequency: " + meanFrequency, 500, 100);
+
+  if (f.getFeatures() != null && random(1.0) > .75) {
+    float inputFrequency = f.getFeatures();
+    if (inputFrequency < 3000) {
+      meanFrequency = (.4 * inputFrequency) + (.6 * meanFrequency);
+      frequencyGlide.setValue(meanFrequency);
+    }
+  }
 
   strongestFreqIndex = (int) ((meanFrequency / 19980.0) * 256.0);
 
@@ -209,7 +253,7 @@ void draw()
         stroke(highlight);
       }
       else {
-        stroke(fore);
+        stroke(strokeColor);
       }
       line(x, setHeight, x, setHeight - barHeight);
     }
@@ -247,11 +291,12 @@ void micOn() {
 }
 
 void resynthGainSlider(float value) {
-  // change resynthesis gain
+  wpGlide.setValue(value / 50);
 }
 
 void resynthButton() {
-  // switch on resynthesis
+  usingResynth = !usingResynth;
+  stateSwitcher();
 }
 
 void stateSwitcher() {
@@ -263,5 +308,7 @@ void stateSwitcher() {
     filter.addInput(player);
   }
   
-  // if resynthesis is on, modify UGen graph to play your WavePlayer
+  if (usingResynth) {
+    filter.addInput(wpGain);
+  }
 }
