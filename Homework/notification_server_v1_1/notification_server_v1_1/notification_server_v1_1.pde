@@ -19,7 +19,7 @@ ArrayList<Notification> notifications;
 
 Example example;
 
-static final String MRBROLA_LOCATION = "/usr/share/mbrola";
+static final String MRBROLA_LOCATION = "/usr/lib/x86_64-linux-gnu/mbrola";
 TTS tts;
 
 ControlP5 p5;
@@ -111,14 +111,16 @@ class Example implements NotificationListener {
   private Environment environment;
   private AudioContext ac;
   private Gain masterGain;
+  private UserProfile userProfile;
 
   public Example(AudioContext ac, Gain g) {
     //setup here
     this.environment = Environment.PARTY;
     this.ac = ac;
     this.masterGain = g;
+    this.userProfile = new UserProfile(eventDataJSON1);
     ac.out.addInput(g);
-    g.addInput(getSamplePlayer(this.environment));
+    g.addInput(getSamplePlayer(this.environment, SamplePlayer.LoopType.LOOP_FORWARDS));
     ac.start();
   }
   
@@ -128,7 +130,7 @@ class Example implements NotificationListener {
     + Integer.toString(notification.getTimestamp()) + "millis.");
   
     NotificationManager manager = getNotificationManager(notification.getType());
-    manager.processNotification(notification);
+    manager.processNotification(notification, this.userProfile);
   }
   
   public Environment getEnvironment() {
@@ -138,7 +140,6 @@ class Example implements NotificationListener {
   public void setEnvironment(Environment e) {
     this.environment = e;
     this.masterGain.clearInputConnections();
-    SamplePlayer s = getSamplePlayer(this.environment);
-    this.masterGain.addInput(s);
+    g.addInput(getSamplePlayer(this.environment, SamplePlayer.LoopType.LOOP_FORWARDS));
   }
 }

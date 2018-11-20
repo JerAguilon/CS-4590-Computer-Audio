@@ -43,9 +43,30 @@ abstract class NotificationManager {
     this.environment = environment;
   }
 
-  public void processNotification(Notification n) {
+  public abstract void processPartyNotification(Notification n, UserProfile userProfile);
+  public abstract void processJoggingNotification(Notification n, UserProfile userProfile);
+  public abstract void processLectureNotification(Notification n, UserProfile userProfile);
+  public abstract void processPublicTransitNotification(Notification n, UserProfile userProfile);
+
+  public void processNotification(Notification n, UserProfile userProfile) {
     /* tts.speak(n.getSender()); */
     /* tts.speak(n.getMessage()); */
+    switch(this.environment) {
+      case PARTY: 
+        processPartyNotification(n, userProfile);
+        break;
+      case LECTURING:
+        processLectureNotification(n, userProfile);
+        break;
+      case JOGGING:
+        processJoggingNotification(n, userProfile);
+        break;
+      case PUBLIC_TRANSIT:
+        processPublicTransitNotification(n, userProfile);
+        break;
+      default:
+        break;
+    }
 
     String debugOutput = "";
     switch (n.getType()) {
@@ -69,19 +90,16 @@ abstract class NotificationManager {
     
     println(debugOutput);
   }
-
 }
 
 class EmailNotificationManager extends NotificationManager {
-  private void processPartyNotification(Notification n) {
-    if (n.getPriorityLevel() > 3) {
+  public void processPartyNotification(Notification n, UserProfile userProfile) {
+    if (n.getPriorityLevel() > 3 && userProfile.isBestFriend(n.getSender())) {
       g.addInput(getSamplePlayer(NotificationSound.EMAIL_TRIPLE_DING));
-    } else {
-      g.addInput(getSamplePlayer(NotificationSound.EMAIL_DING));
-    }
+    } 
   }
 
-  private void processJoggingNotification(Notification n) {
+  public void processJoggingNotification(Notification n, UserProfile userProfile) {
     if (n.getPriorityLevel() > 2) {
       g.addInput(getSamplePlayer(NotificationSound.EMAIL_TRIPLE_DING));
     } else {
@@ -89,39 +107,19 @@ class EmailNotificationManager extends NotificationManager {
     }
   }
 
-  private void processLectureNotification(Notification n) {
+  public void processLectureNotification(Notification n, UserProfile userProfile) {
     // TODO: maybe white noise?
     if (n.getPriorityLevel() == 4) {
       g.addInput(getSamplePlayer(NotificationSound.EMAIL_TRIPLE_DING));
     }
   }
   
-  private void processPublicTransitNotification(Notification n) {
+  public void processPublicTransitNotification(Notification n, UserProfile userProfile) {
     if (n.getPriorityLevel() > 2) {
       g.addInput(getSamplePlayer(NotificationSound.EMAIL_TRIPLE_DING));
     } else {
       g.addInput(getSamplePlayer(NotificationSound.EMAIL_DING));
     }
-  }
-
-  public void processNotification(Notification n) {
-    switch(this.environment) {
-      case PARTY: 
-        processPartyNotification(n);
-        break;
-      case LECTURING:
-        processLectureNotification(n);
-        break;
-      case JOGGING:
-        processJoggingNotification(n);
-        break;
-      case PUBLIC_TRANSIT:
-        processPublicTransitNotification(n);
-        break;
-      default:
-        break;
-    }
-    super.processNotification(n);
   }
 }
 
@@ -129,70 +127,109 @@ class TweetNotificationManager extends NotificationManager {
 
   private static final int RETWEET_NOTIFICATION_THRESHOLD = 1000;
 
-  private void processPartyNotification(Notification n) {
-    if (n.getPriorityLevel() > 2) {
+  public void processPartyNotification(Notification n, UserProfile userProfile) {
+    if (n.getPriorityLevel() > 3) {
       g.addInput(getSamplePlayer(NotificationSound.TWITTER_CHIRP));
     } else if (n.getRetweets() > TweetNotificationManager.RETWEET_NOTIFICATION_THRESHOLD) {
       g.addInput(getSamplePlayer(NotificationSound.TWITTER_CHIRP));
     }
   }
 
-  private void processJoggingNotification(Notification n) {
-    if (n.getPriorityLevel() > 2) {
+  public void processJoggingNotification(Notification n, UserProfile userProfile) {
+    if (n.getPriorityLevel() == 4 || userProfile.isBestFriend(n.getSender())) {
       g.addInput(getSamplePlayer(NotificationSound.TWITTER_CHIRP));
     }
   }
 
-  private void processLectureNotification(Notification n) {
+  public void processLectureNotification(Notification n, UserProfile userProfile) {
     // TODO: play a non-intrusive sound when something urgent comes up
     if (n.getPriorityLevel() == 4) {
       g.addInput(getSamplePlayer(NotificationSound.TWITTER_CHIRP));
     }
   }
   
-  private void processPublicTransitNotification(Notification n) {
+  public void processPublicTransitNotification(Notification n, UserProfile userProfile) {
     //TODO: Do we want to do it every time for this environment?
     g.addInput(getSamplePlayer(NotificationSound.TWITTER_CHIRP));
-  }
-
-  public void processNotification(Notification n) {
-    switch(this.environment) {
-      case PARTY: 
-        processPartyNotification(n);
-        break;
-      case LECTURING:
-        processLectureNotification(n);
-        break;
-      case JOGGING:
-        processJoggingNotification(n);
-        break;
-      case PUBLIC_TRANSIT:
-        processPublicTransitNotification(n);
-        break;
-      default:
-        break;
-    }
-    super.processNotification(n);
   }
 }
 
 class TextNotificationManager extends NotificationManager {
-  public void processNotification(Notification n) {
-    super.processNotification(n);
+  public void processPartyNotification(Notification n, UserProfile userProfile) {
+    if (!userProfile.isBestFriend(n.getSender())) {
+      return;
+    }
+
+    if (n.getPriorityLevel() > 3) {
+      g.addInput(getSamplePlayer(NotificationSound.TEXT_DEFAULT_NOTIFICATION));
+    }
+  }
+
+  public void processJoggingNotification(Notification n, UserProfile userProfile) {
+    if (n.getPriorityLevel() > 2 || userProfile.isBestFriend(n.getSender())) {
+      g.addInput(getSamplePlayer(NotificationSound.TEXT_DEFAULT_NOTIFICATION));
+    }
+  }
+  public void processLectureNotification(Notification n, UserProfile userProfile) {
+    if (n.getPriorityLevel() > 3) {
+      g.addInput(getSamplePlayer(NotificationSound.TEXT_DEFAULT_NOTIFICATION));
+    }
+  }
+
+  public void processPublicTransitNotification(Notification n, UserProfile userProfile) {
+    if (n.getPriorityLevel() > 3) {
+      g.addInput(getSamplePlayer(NotificationSound.TEXT_DEFAULT_NOTIFICATION));
+    }
   }
 } 
 
 class MissedCallNotificationManager extends NotificationManager {
-  public void processNotification(Notification n) {
-    g.addInput(getSamplePlayer(NotificationSound.PHONE_DEFAULT_RING));
-    super.processNotification(n);
+  public void processPartyNotification(Notification n, UserProfile userProfile) {
+    if (n.getPriorityLevel() > 3 || userProfile.isBestFriend(n.getSender())) {
+      g.addInput(getSamplePlayer(NotificationSound.MISSED_CALL_URGENT));
+    } else {
+      g.addInput(getSamplePlayer(NotificationSound.MISSED_CALL_DEFAULT));
+    }
+  }
+
+  public void processJoggingNotification(Notification n, UserProfile userProfile) {
+    if (n.getPriorityLevel() > 2 || userProfile.isBestFriend(n.getSender())) {
+      g.addInput(getSamplePlayer(NotificationSound.MISSED_CALL_URGENT));
+    } else {
+      g.addInput(getSamplePlayer(NotificationSound.MISSED_CALL_DEFAULT));
+    }
+  }
+  public void processLectureNotification(Notification n, UserProfile userProfile) {
+    if (n.getPriorityLevel() > 3) {
+      g.addInput(getSamplePlayer(NotificationSound.MISSED_CALL_URGENT));
+    } else {
+      g.addInput(getSamplePlayer(NotificationSound.MISSED_CALL_DEFAULT));
+    }
+  }
+
+  public void processPublicTransitNotification(Notification n, UserProfile userProfile) {
+    if (n.getPriorityLevel() > 3) {
+      g.addInput(getSamplePlayer(NotificationSound.MISSED_CALL_URGENT));
+    } else {
+      g.addInput(getSamplePlayer(NotificationSound.MISSED_CALL_DEFAULT));
+    }
   }
 } 
 
 class VoiceMailNotificationManager extends NotificationManager {
-  public void processNotification(Notification n) {
-    g.addInput(getSamplePlayer(NotificationSound.PHONE_DEFAULT_RING));
-    super.processNotification(n);
+  public void processPartyNotification(Notification n, UserProfile userProfile) {
+    g.addInput(getSamplePlayer(NotificationSound.VOICEMAIL_CHIME));
+  }
+
+  public void processJoggingNotification(Notification n, UserProfile userProfile) {
+    g.addInput(getSamplePlayer(NotificationSound.VOICEMAIL_CHIME));
+  }
+  public void processLectureNotification(Notification n, UserProfile userProfile) {
+    g.addInput(getSamplePlayer(NotificationSound.VOICEMAIL_CHIME));
+  }
+
+  public void processPublicTransitNotification(Notification n, UserProfile userProfile) {
+    g.addInput(getSamplePlayer(NotificationSound.VOICEMAIL_CHIME));
   }
 } 
 

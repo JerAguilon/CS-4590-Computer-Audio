@@ -7,12 +7,13 @@ Sample getSample(String fileName) {
   return SampleManager.sample(dataPath(fileName)); 
 }
 
-SamplePlayer getSamplePlayer(String fileName, Boolean killOnEnd) {
+SamplePlayer getSamplePlayer(String fileName, Boolean killOnEnd, SamplePlayer.LoopType loopType) {
   SamplePlayer player = null;
   try {
     player = new SamplePlayer(ac, getSample(fileName));
     player.setKillOnEnd(killOnEnd);
     player.setName(fileName);
+    player.setLoopType(loopType);
   }
   catch(Exception e) {
     println("Exception while attempting to load sample: " + fileName);
@@ -24,20 +25,24 @@ SamplePlayer getSamplePlayer(String fileName, Boolean killOnEnd) {
   return player;
 }
 
-SamplePlayer getSamplePlayer(String fileName) {
-  return getSamplePlayer(fileName, false);
+SamplePlayer getSamplePlayer(String fileName, SamplePlayer.LoopType loopType) {
+  return getSamplePlayer(fileName, false, loopType);
+}
+
+SamplePlayer getSamplePlayer(Environment e, SamplePlayer.LoopType loopType) {
+  return getSamplePlayer(e.getSoundFile(), loopType);
 }
 
 SamplePlayer getSamplePlayer(Environment e) {
-  return getSamplePlayer(e.getSoundFile());
+  return getSamplePlayer(e, SamplePlayer.LoopType.NO_LOOP_FORWARDS);
 }
 
 SamplePlayer getSamplePlayer(NotificationSound n) {
-  return getSamplePlayer(n.getSoundFile(), true);
+  return getSamplePlayer(n.getSoundFile(), true, SamplePlayer.LoopType.NO_LOOP_FORWARDS);
 }
 
 public enum Environment {
-  PUBLIC_TRANSIT(""), JOGGING("jogging.mp3"), PARTY("party.mp3"), LECTURING("");
+  PUBLIC_TRANSIT(""), JOGGING("jogging.wav"), PARTY("party.mp3"), LECTURING("");
   
   private final String soundFile;
   
@@ -52,15 +57,17 @@ public enum Environment {
 
 
 public enum NotificationSound {
-  EMAIL_DING(""),
-  EMAIL_TRIPLE_DING(""),
+  EMAIL_DING("single_ding.wav"),
+  EMAIL_TRIPLE_DING("ding_dong.wav"),
   
   TWITTER_CHIRP("chirp.wav"),
   
-  PHONE_DEFAULT_RING("phone_ring.wav"),
-  PHONE_URGENT_RING(""),
+  MISSED_CALL_DEFAULT("missed_call_default.wav"),
+  MISSED_CALL_URGENT("missed_call_urgent.wav"),
 
-  VOICEMAIL_CLIMBING_BEEPS("");
+  TEXT_DEFAULT_NOTIFICATION("text_notif_default.mp3"),
+
+  VOICEMAIL_CHIME("voicemail.wav");
   
   private final String wavFile;
   
