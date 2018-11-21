@@ -27,6 +27,12 @@ RadioButton environmentButtons;
 color fore = color(255, 255, 255);
 color back = color(0, 0, 0);
 
+RadioButton tweetButton;
+RadioButton emailButton;
+RadioButton textButton;
+RadioButton missedCallButton;
+RadioButton voiceMailButton;
+
 Gain g;
 
 void setup() {
@@ -44,11 +50,58 @@ void setup() {
     .setItemsPerRow(2)
     .setSpacingColumn(80)
     .setSpacingRow(10)
+    .setNoneSelectedAllowed(false)
     .addItem("Public Transit", 0)
     .addItem("Jogging", 1)
     .addItem("Party", 2)
-    .addItem("Lecturing", 3);
+    .addItem("Lecturing", 3)
+    .activate(2);
+
+  tweetButton = p5.addRadioButton("tweetButton")
+    .setPosition(50, 120)
+    .setSize(40, 20)
+    .setColorForeground(color(120))
+    .setColorActive(color(255))
+    .setColorLabel(color(255))
+    .addItem("Enable Tweets", 1)
+    .activate(0);
+
+  emailButton = p5.addRadioButton("emailButton")
+    .setPosition(50, 150)
+    .setSize(40, 20)
+    .setColorForeground(color(120))
+    .setColorActive(color(255))
+    .setColorLabel(color(255))
+    .addItem("Enable Emails", 1)
+    .activate(0);
   
+  textButton = p5.addRadioButton("textButton")
+    .setPosition(50, 180)
+    .setSize(40, 20)
+    .setColorForeground(color(120))
+    .setColorActive(color(255))
+    .setColorLabel(color(255))
+    .addItem("Enable Texts", 1)
+    .activate(0);
+
+  missedCallButton = p5.addRadioButton("missedCallButton")
+    .setPosition(50, 210)
+    .setSize(40, 20)
+    .setColorForeground(color(120))
+    .setColorActive(color(255))
+    .setColorLabel(color(255))
+    .addItem("Enable Missed Calls", 1)
+    .activate(0);
+
+  voiceMailButton = p5.addRadioButton("voiceMailButton")
+    .setPosition(50, 240)
+    .setSize(40, 20)
+    .setColorForeground(color(120))
+    .setColorActive(color(255))
+    .setColorLabel(color(255))
+    .addItem("Enable Voice Mails", 1)
+    .activate(0);
+
   
   //loading the event stream, which also starts the timer serving events
   
@@ -105,6 +158,26 @@ void environmentButtons(int i) {
   }
 }
 
+void tweetButton(int i) {
+  example.updateNotificationPolicy(NotificationType.Tweet, i == 1 ? true : false);
+}
+
+void emailButton(int i) {
+  example.updateNotificationPolicy(NotificationType.Email, i == 1 ? true : false);
+}
+
+void missedCallButton(int i) {
+  example.updateNotificationPolicy(NotificationType.MissedCall, i == 1 ? true : false);
+}
+
+void textButton(int i) {
+  example.updateNotificationPolicy(NotificationType.MissedCall, i == 1 ? true : false);
+}
+
+void voiceMailButton(int i) {
+  example.updateNotificationPolicy(NotificationType.VoiceMail, i == 1 ? true : false);
+}
+
 //in your own custom class, you will implement the NotificationListener interface 
 //(with the notificationReceived() method) to receive Notification events as they come in
 class Example implements NotificationListener {
@@ -141,5 +214,9 @@ class Example implements NotificationListener {
     this.environment = e;
     this.masterGain.clearInputConnections();
     g.addInput(getSamplePlayer(this.environment, SamplePlayer.LoopType.LOOP_FORWARDS));
+  }
+  
+  public void updateNotificationPolicy(NotificationType t, boolean enable) {
+    this.userProfile.updateNotificationPolicy(t, enable);
   }
 }

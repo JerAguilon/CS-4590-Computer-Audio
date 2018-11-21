@@ -49,6 +49,9 @@ abstract class NotificationManager {
   public abstract void processPublicTransitNotification(Notification n, UserProfile userProfile);
 
   public void processNotification(Notification n, UserProfile userProfile) {
+    if (!userProfile.isNotificationEnabled(n.getType())) {
+      return;
+    }
     /* tts.speak(n.getSender()); */
     /* tts.speak(n.getMessage()); */
     switch(this.environment) {
@@ -218,11 +221,16 @@ class MissedCallNotificationManager extends NotificationManager {
 
 class VoiceMailNotificationManager extends NotificationManager {
   public void processPartyNotification(Notification n, UserProfile userProfile) {
-    g.addInput(getSamplePlayer(NotificationSound.VOICEMAIL_CHIME));
+    if (userProfile.isBestFriend(n.getSender()) || n.getPriorityLevel() > 3) {
+      g.addInput(getSamplePlayer(NotificationSound.VOICEMAIL_CHIME));
+    }
   }
 
   public void processJoggingNotification(Notification n, UserProfile userProfile) {
-    g.addInput(getSamplePlayer(NotificationSound.VOICEMAIL_CHIME));
+    if (userProfile.isBestFriend(n.getSender()) || n.getPriorityLevel() > 2) {
+      g.addInput(getSamplePlayer(NotificationSound.VOICEMAIL_CHIME));
+    }
+
   }
   public void processLectureNotification(Notification n, UserProfile userProfile) {
     g.addInput(getSamplePlayer(NotificationSound.VOICEMAIL_CHIME));
