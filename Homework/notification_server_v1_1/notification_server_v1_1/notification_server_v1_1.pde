@@ -27,6 +27,8 @@ RadioButton environmentButtons;
 color fore = color(255, 255, 255);
 color back = color(0, 0, 0);
 
+RadioButton eventStream;
+
 RadioButton tweetButton;
 RadioButton emailButton;
 RadioButton textButton;
@@ -56,6 +58,21 @@ void setup() {
     .addItem("Party", 2)
     .addItem("Lecturing", 3)
     .activate(2);
+
+  eventStream = p5.addRadioButton("eventStream")
+    .setPosition(300, 40)
+    .setSize(40, 20)
+    .setColorForeground(color(120))
+    .setColorActive(color(255))
+    .setColorLabel(color(255))
+    .setItemsPerRow(2)
+    .setSpacingColumn(100)
+    .setSpacingRow(10)
+    .setNoneSelectedAllowed(false)
+    .addItem("ExampleData_1.json", 0)
+    .addItem("ExampleData_2.json", 1)
+    .addItem("ExampleData_3.json", 2)
+    .activate(0);
 
   tweetButton = p5.addRadioButton("tweetButton")
     .setPosition(50, 120)
@@ -218,5 +235,9 @@ class Example implements NotificationListener {
   
   public void updateNotificationPolicy(NotificationType t, boolean enable) {
     this.userProfile.updateNotificationPolicy(t, enable);
+  }
+
+  public void updateNotificationStream(String notificationStream) {
+
   }
 }
