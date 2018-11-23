@@ -14,8 +14,7 @@ public class UserProfile {
 
   private Set<String> bestFriends;
   private Set<NotificationType> enabledNotifications;
-
-  private final Set<String> activeContacts;
+  private Set<String> activeContacts;
 
   private Set<String> getActiveContacts(JSONArray arr) {
     Set<String> contacts = new HashSet();
@@ -26,9 +25,7 @@ public class UserProfile {
   }
 
   public UserProfile(String jsonFile) {
-    enabledNotifications = new HashSet(Arrays.asList(NotificationType.values()));
-    bestFriends = new HashSet(Arrays.asList(this.DEFAULT_FRIENDS));
-    activeContacts = this.getActiveContacts(loadJSONArray(jsonFile));
+    rebuild(jsonFile);
   }
 
   public boolean isBestFriend(String sender) {
@@ -47,4 +44,9 @@ public class UserProfile {
     }
   }
 
+  public void rebuild(String jsonFile) {
+    enabledNotifications = new HashSet(Arrays.asList(NotificationType.values()));
+    bestFriends = new HashSet(Arrays.asList(this.DEFAULT_FRIENDS));
+    activeContacts = this.getActiveContacts(loadJSONArray(jsonFile));
+  }
 }

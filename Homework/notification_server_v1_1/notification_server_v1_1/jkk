@@ -224,8 +224,6 @@ void eventStream(int i) {
 //in your own custom class, you will implement the NotificationListener interface 
 //(with the notificationReceived() method) to receive Notification events as they come in
 class Example implements NotificationListener {
-  private final Object MUTEX = new Object();
-
   private Environment environment;
   private AudioContext ac;
   private Gain masterGain;
@@ -247,10 +245,8 @@ class Example implements NotificationListener {
     println("<Example> " + notification.getType().toString() + " notification received at " 
     + Integer.toString(notification.getTimestamp()) + "millis.");
   
-    synchronized (MUTEX) {
-      NotificationManager manager = getNotificationManager(notification.getType());
-      manager.processNotification(notification, this.userProfile, this.environment);
-    }
+    NotificationManager manager = getNotificationManager(notification.getType());
+    manager.processNotification(notification, this.userProfile, this.environment);
   }
   
   public Environment getEnvironment() {
@@ -268,9 +264,6 @@ class Example implements NotificationListener {
   }
 
   public void updateNotificationStream(String eventDataFile) {
-    println("Building a new notification stream for " + eventDataFile); 
-    server.stopEventStream(); //always call this before loading a new stream
-    server.loadEventStream(eventDataFile);
-    userProfile.rebuild(eventDataFile); 
-  }
+    println("Building a new notification stream for " + eventDataFile); server.stopEventStream(); //always call this before loading a new stream
+    userProfile.rebuild(eventDataFile); }
 }

@@ -6,7 +6,7 @@ AudioContext ac; //needed here because getSamplePlayer() uses it below
 UGen getSineWaveUGen(float baseFrequency) {
   Glide sineFrequency = new Glide(ac, baseFrequency, 200);
   UGen wavePlayer = new WavePlayer(ac, sineFrequency, Buffer.SINE);
-  Gain gain = new Gain(ac, 1, 1); // create the gain object
+  Gain gain = new Gain(ac, 1, .5); // create the gain object
   gain.addInput(wavePlayer);
   return gain;
 }
