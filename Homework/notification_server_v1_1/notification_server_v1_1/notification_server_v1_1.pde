@@ -168,6 +168,7 @@ void keyPressed() {
 
 void environmentButtons(int i) {
   if (i != -1) {
+    println("Setting to " + Integer.toString(i));
     example.setEnvironment(Environment.values()[i]);
   } else {
     example.setEnvironment(null);
@@ -215,6 +216,9 @@ class Example implements NotificationListener {
   
   //this method must be implemented to receive notifications
   public void notificationReceived(Notification notification) { 
+    println("<Example> " + notification.getType().toString() + " notification received at " 
+    + Integer.toString(notification.getTimestamp()) + "millis.");
+  
     NotificationManager manager = getNotificationManager(notification.getType());
     manager.processNotification(notification, this.userProfile, this.environment);
   }
@@ -231,5 +235,9 @@ class Example implements NotificationListener {
   
   public void updateNotificationPolicy(NotificationType t, boolean enable) {
     this.userProfile.updateNotificationPolicy(t, enable);
+  }
+
+  public void updateNotificationStream(String notificationStream) {
+
   }
 }

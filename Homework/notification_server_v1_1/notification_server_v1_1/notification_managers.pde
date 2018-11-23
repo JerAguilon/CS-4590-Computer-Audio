@@ -53,14 +53,13 @@ abstract class NotificationManager {
     if (!userProfile.isNotificationEnabled(n.getType())) {
       return;
     }
-    /* tts.speak(n.getSender()); */
-    /* tts.speak(n.getMessage()); */
-    if (n.getPriorityLevel() <= 2 && userProfile.isBestFriend(n.getSender())) {
-      float baseFrequency = 440;
-      for (int i = 0; i < 3; i++) {
-        g.addInput(getSineWaveUGen(baseFrequency));
+    if (n.getPriorityLevel() == 1 && userProfile.isBestFriend(n.getSender())) {
+      float baseFrequency = 320;
+      UGen sineWave = getSineWaveUGen(baseFrequency);
+      for (int i = 0; i < 2; i++) {
+        g.addInput(sineWave);
         this.sleep(125);
-        g.clearInputConnections();
+        g.removeAllConnections(sineWave);
         this.sleep(75);
       }
     }
