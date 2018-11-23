@@ -50,7 +50,7 @@ SamplePlayer getSamplePlayer(NotificationSound n) {
 }
 
 public enum Environment {
-  PUBLIC_TRANSIT("subway.wav"), JOGGING("jogging.wav"), PARTY("party.mp3"), LECTURING("");
+  PUBLIC_TRANSIT("subway.wav"), JOGGING("jogging.wav"), PARTY("party.mp3"), LECTURING("psychology_lecture_short.mp3");
   
   private final String soundFile;
   
