@@ -36,6 +36,9 @@ RadioButton textButton;
 RadioButton missedCallButton;
 RadioButton voiceMailButton;
 
+RadioButton batteryButtons;
+RadioButton connectionButtons;
+
 Gain g;
 
 void setup() {
@@ -58,6 +61,37 @@ void setup() {
     .addItem("Jogging", 1)
     .addItem("Party", 2)
     .addItem("Lecturing", 3)
+    .activate(2);
+
+  batteryButtons = p5.addRadioButton("batteryButtons")
+    .setPosition(300, 120)
+    .setSize(40, 20)
+    .setColorForeground(color(120))
+    .setColorActive(color(255))
+    .setColorLabel(color(255))
+    .setItemsPerRow(2)
+    .setSpacingColumn(80)
+    .setSpacingRow(10)
+    .setNoneSelectedAllowed(false)
+    .addItem("Critical Battery", 0)
+    .addItem("Low Battery", 1)
+    .addItem("Medium Battery", 2)
+    .addItem("High Battery", 3)
+    .activate(2);
+
+  connectionButtons = p5.addRadioButton("connectionButtons")
+    .setPosition(300, 200)
+    .setSize(40, 20)
+    .setColorForeground(color(120))
+    .setColorActive(color(255))
+    .setColorLabel(color(255))
+    .setItemsPerRow(2)
+    .setSpacingColumn(80)
+    .setSpacingRow(10)
+    .setNoneSelectedAllowed(false)
+    .addItem("Low Connection", 0)
+    .addItem("Medium Connection", 1)
+    .addItem("High Connection", 2)
     .activate(2);
 
   eventStream = p5.addRadioButton("eventStream")
@@ -119,6 +153,10 @@ void setup() {
     .setColorLabel(color(255))
     .addItem("Enable Voice Mails", 1)
     .activate(0);
+
+  p5.addButton("notificationReport")
+    .setPosition(50, 80)
+    .setLabel("Notificatoin Report");
 
   
   //loading the event stream, which also starts the timer serving events
@@ -196,6 +234,33 @@ void voiceMailButton(int i) {
   example.updateNotificationPolicy(NotificationType.VoiceMail, i == 1 ? true : false);
 }
 
+void batteryButtons(int i) {
+  NotificationSound sound;
+  if (i == 0) {
+    sound = NotificationSound.CRITICAL_BATTERY;
+  } else if (i == 1) {
+    sound = NotificationSound.LOW_BATTERY;
+  } else if (i == 2) {
+    sound = NotificationSound.MEDIUM_BATTERY;
+  } else {
+    sound = NotificationSound.HIGH_BATTERY;
+  }
+  addInput(getSamplePlayer(sound));
+}
+
+void connectionButtons(int i) {
+  NotificationSound sound;
+  if (i == 0) {
+    sound = NotificationSound.LOW_CONNECTION;
+  } else if (i == 1) {
+    sound = NotificationSound.MEDIUM_CONNECTION;
+  } else {
+    sound = NotificationSound.HIGH_CONNECTION;
+  }
+  addInput(getSamplePlayer(sound));
+}
+
+
 void eventStream(int i) {
   //example of stopping the current event stream and loading the second one
   if (key == RETURN || key == ENTER) {
@@ -221,10 +286,13 @@ void eventStream(int i) {
   example.updateNotificationStream(file);
 }
 
+void notificationReport() {
+  example.getReport();
+}
+
 //in your own custom class, you will implement the NotificationListener interface 
 //(with the notificationReceived() method) to receive Notification events as they come in
 class Example implements NotificationListener {
-  private final Object MUTEX = new Object();
 
   private Environment environment;
   private AudioContext ac;
@@ -243,16 +311,14 @@ class Example implements NotificationListener {
   }
   
   //this method must be implemented to receive notifications
-  public void notificationReceived(Notification notification) { 
+  public synchronized void notificationReceived(Notification notification) { 
     println("<Example> " + notification.getType().toString() + " notification received at " 
     + Integer.toString(notification.getTimestamp()) + "millis.");
   
-    synchronized (MUTEX) {
-      NotificationManager manager = getNotificationManager(notification.getType());
-      manager.processNotification(notification, this.userProfile, this.environment);
-    }
+    NotificationManager manager = getNotificationManager(notification.getType());
+    manager.processNotification(notification, this.userProfile, this.environment);
   }
-  
+
   public Environment getEnvironment() {
     return this.environment;
   }
@@ -272,5 +338,9 @@ class Example implements NotificationListener {
     server.stopEventStream(); //always call this before loading a new stream
     server.loadEventStream(eventDataFile);
     userProfile.rebuild(eventDataFile); 
+  }
+
+  public synchronized void getReport() {
+    this.userProfile.getReport();
   }
 }

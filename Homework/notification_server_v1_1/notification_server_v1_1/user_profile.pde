@@ -15,14 +15,8 @@ public class UserProfile {
   private Set<String> bestFriends;
   private Set<NotificationType> enabledNotifications;
   private Set<String> activeContacts;
+  private List<SamplePlayer> samplePlayers;
 
-  private Set<String> getActiveContacts(JSONArray arr) {
-    Set<String> contacts = new HashSet();
-    for (int i = 0; i < arr.size(); i++) {
-      contacts.add(arr.getJSONObject(i).getString("sender"));
-    }
-    return contacts;
-  }
 
   public UserProfile(String jsonFile) {
     rebuild(jsonFile);
@@ -48,5 +42,47 @@ public class UserProfile {
     enabledNotifications = new HashSet(Arrays.asList(NotificationType.values()));
     bestFriends = new HashSet(Arrays.asList(this.DEFAULT_FRIENDS));
     activeContacts = this.getActiveContacts(loadJSONArray(jsonFile));
+    samplePlayers = new ArrayList();
+  }
+
+  public void addNotification(SamplePlayer sound) {
+    samplePlayers.add(sound);
+  }
+
+  public synchronized void getReport() {
+    if (samplePlayers.size() == 0) {
+      return;
+    }
+
+    float pan = -1;
+    float delta_pan = 2.0 / samplePlayers.size();
+
+    for (int index = 0; index < samplePlayers.size(); index++) {
+      
+      final SamplePlayer s = samplePlayers.get(index);
+      final Panner p = new Panner(ac, pan);
+      p.addInput(s);
+      s.setEndListener(
+        new Bead() {
+          public void messageReceived(Bead m) {
+            g.removeAllConnections(p);
+          }
+        }
+      );
+      g.addInput(p);
+      while (g.containsInput(p)) {
+        sleep(50);
+        println("    SLEEPING" + s.toString());
+      }
+      pan += delta_pan;
+    }
+  }
+
+  private Set<String> getActiveContacts(JSONArray arr) {
+    Set<String> contacts = new HashSet();
+    for (int i = 0; i < arr.size(); i++) {
+      contacts.add(arr.getJSONObject(i).getString("sender"));
+    }
+    return contacts;
   }
 }

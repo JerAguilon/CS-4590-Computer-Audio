@@ -66,7 +66,7 @@ public enum Environment {
 
 public enum NotificationSound {
   EMAIL_DING("single_ding.wav"),
-  EMAIL_TRIPLE_DING("ding_dong.wav"),
+  EMAIL_DING_URGENT("ding_dong.mp3"),
   
   TWITTER_CHIRP("chirp.wav"),
   
@@ -75,7 +75,17 @@ public enum NotificationSound {
 
   TEXT_DEFAULT_NOTIFICATION("text_notif_default.mp3"),
 
-  VOICEMAIL_CHIME("voicemail.wav");
+  VOICEMAIL_CHIME("voicemail.wav"),
+
+  HIGH_BATTERY("high_battery.wav"),
+  MEDIUM_BATTERY("medium_battery.wav"),
+  LOW_BATTERY("low_battery.wav"),
+  CRITICAL_BATTERY("critical_battery.wav"),
+
+  HIGH_CONNECTION("high_connection.wav"),
+  MEDIUM_CONNECTION("medium_connection.wav"),
+  LOW_CONNECTION("low_connection.wav");
+
   
   private final String wavFile;
   

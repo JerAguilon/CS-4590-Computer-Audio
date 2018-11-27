@@ -10,7 +10,7 @@ class Notification {
   int contentSummary; //NOT used by Tweet or MissedCall
   int retweets; //used by Tweet only
   int favorites; //used by Tweet only
-  
+
   public Notification(JSONObject json) {
     this.timestamp = json.getInt("timestamp");
     //time in milliseconds for playback from sketch start
