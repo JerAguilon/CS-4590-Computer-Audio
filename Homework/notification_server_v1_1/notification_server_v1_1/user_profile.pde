@@ -64,6 +64,10 @@ public class UserProfile {
 
     for (int index = 0; index < samplePlayers.size(); index++) {
       
+      if (index == samplePlayers.size() - 1) {
+        pan = 1;
+      }
+
       final String filename = samplePlayers.get(index).getSample().getFileName();
       final SamplePlayer s= getSamplePlayer(
           filename, true, SamplePlayer.LoopType.NO_LOOP_FORWARDS
@@ -82,7 +86,7 @@ public class UserProfile {
         sleep(25);
       }
       pan += delta_pan;
-      sleep(100);
+      sleep(200);
     }
     tts.speak("That's all your messages");
     println("<REPORT> Done");
