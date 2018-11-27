@@ -155,8 +155,9 @@ void setup() {
     .activate(0);
 
   p5.addButton("notificationReport")
-    .setPosition(50, 80)
-    .setLabel("Notificatoin Report");
+    .setSize(100, 20)
+    .setPosition(50, 300)
+    .setLabel("Notification Report");
 
   
   //loading the event stream, which also starts the timer serving events
@@ -193,6 +194,11 @@ void draw() {
   //this method must be present (even if empty) to process events such as keyPressed()
   background(back);
   stroke(fore);
+
+  text("Sound Environment", 50, 30);
+  text("Notification Stream", 300, 30);
+  text("Enabled Notifications", 50, 110);
+  text("System Status Triggers", 300, 110);
   
 }
 
@@ -286,7 +292,7 @@ void eventStream(int i) {
   example.updateNotificationStream(file);
 }
 
-void notificationReport() {
+void notificationReport(int i) {
   example.getReport();
 }
 
@@ -298,9 +304,11 @@ class Example implements NotificationListener {
   private AudioContext ac;
   private Gain masterGain;
   private UserProfile userProfile;
+  private String eventDataFile;
 
   public Example(AudioContext ac, Gain g) {
     //setup here
+    this.eventDataFile = eventDataJSON1;
     this.environment = Environment.PARTY;
     this.ac = ac;
     this.masterGain = g;
@@ -312,7 +320,7 @@ class Example implements NotificationListener {
   
   //this method must be implemented to receive notifications
   public synchronized void notificationReceived(Notification notification) { 
-    println("<Example> " + notification.getType().toString() + " notification received at " 
+    println("<Listener> " + notification.getType().toString() + " notification received at " 
     + Integer.toString(notification.getTimestamp()) + "millis.");
   
     NotificationManager manager = getNotificationManager(notification.getType());
@@ -320,13 +328,19 @@ class Example implements NotificationListener {
   }
 
   public Environment getEnvironment() {
+    server.stopEventStream(); //always call this before loading a new stream
+    server.loadEventStream(eventDataFile);
+    userProfile.rebuild(eventDataFile); 
     return this.environment;
   }
 
   public void setEnvironment(Environment e) {
     this.environment = e;
     this.masterGain.clearInputConnections();
+
+    println("<Listener> Resetting the environment and event stream");
     g.addInput(getSamplePlayer(this.environment, SamplePlayer.LoopType.LOOP_FORWARDS));
+    this.updateNotificationStream(this.eventDataFile);
   }
   
   public void updateNotificationPolicy(NotificationType t, boolean enable) {
@@ -334,10 +348,11 @@ class Example implements NotificationListener {
   }
 
   public void updateNotificationStream(String eventDataFile) {
-    println("Building a new notification stream for " + eventDataFile); 
+    println("<Listener> Building a new notification stream for " + eventDataFile); 
     server.stopEventStream(); //always call this before loading a new stream
     server.loadEventStream(eventDataFile);
     userProfile.rebuild(eventDataFile); 
+    this.eventDataFile = eventDataFile;
   }
 
   public synchronized void getReport() {

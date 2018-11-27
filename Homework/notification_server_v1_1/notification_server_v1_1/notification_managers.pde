@@ -159,6 +159,11 @@ class EmailNotificationManager extends NotificationManager {
     };
 
     if (n.getPriorityLevel() <= 2) {
+      if (n.getContentSummary() == 1) {
+        tts.speak("Good news");
+      } else if (n.getContentSummary() == 3) {
+        tts.speak("Bad news");
+      }
       return getSamplePlayer(NotificationSound.EMAIL_DING_URGENT);
     } else {
       return getSamplePlayer(NotificationSound.EMAIL_DING);
@@ -226,6 +231,13 @@ class TextNotificationManager extends NotificationManager {
   }
 
   public synchronized SamplePlayer processPublicTransitNotification(Notification n, UserProfile userProfile) {
+    if (n.getPriorityLevel() <= 2) {
+      if (n.getContentSummary() == 1) {
+        tts.speak("Good news");
+      } else if (n.getContentSummary() == 3) {
+        tts.speak("Bad news");
+      }
+    }
     return getSamplePlayer(NotificationSound.TEXT_DEFAULT_NOTIFICATION);
   }
 } 
@@ -283,6 +295,13 @@ class VoiceMailNotificationManager extends NotificationManager {
 
   public synchronized SamplePlayer processPublicTransitNotification(Notification n, UserProfile userProfile) {
     if (userProfile.isBestFriend(n.getSender()) || n.getPriorityLevel() <= 3) {
+      if (n.getPriorityLevel() <= 2) {
+        if (n.getContentSummary() == 1) {
+          tts.speak("Good news");
+        } else if (n.getContentSummary() == 3) {
+          tts.speak("Bad news");
+        }
+      }
       return getSamplePlayer(NotificationSound.VOICEMAIL_CHIME);
     }
     return null;

@@ -51,15 +51,23 @@ public class UserProfile {
 
   public synchronized void getReport() {
     if (samplePlayers.size() == 0) {
+      println("<REPORT> Nothing to report");
+      tts.speak("No messages");
       return;
     }
+
+    println(String.format("<REPORT> Starting a report of size %d", samplePlayers.size()));
+    tts.speak("Here's your report");
 
     float pan = -1;
     float delta_pan = 2.0 / samplePlayers.size();
 
     for (int index = 0; index < samplePlayers.size(); index++) {
       
-      final SamplePlayer s = samplePlayers.get(index);
+      final String filename = samplePlayers.get(index).getSample().getFileName();
+      final SamplePlayer s= getSamplePlayer(
+          filename, true, SamplePlayer.LoopType.NO_LOOP_FORWARDS
+      );
       final Panner p = new Panner(ac, pan);
       p.addInput(s);
       s.setEndListener(
@@ -71,11 +79,13 @@ public class UserProfile {
       );
       g.addInput(p);
       while (g.containsInput(p)) {
-        sleep(50);
-        println("    SLEEPING" + s.toString());
+        sleep(25);
       }
       pan += delta_pan;
+      sleep(100);
     }
+    tts.speak("That's all your messages");
+    println("<REPORT> Done");
   }
 
   private Set<String> getActiveContacts(JSONArray arr) {
